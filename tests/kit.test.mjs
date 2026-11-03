@@ -136,3 +136,28 @@ test('Shadcn actions reject unsafe URLs and render safe external links', () => {
     assert.match(safe, /href="https:\/\/example.org"/);
     assert.match(safe, /rel="noopener noreferrer"/);
 });
+
+test('Shadcn Shell provides keyboard-friendly mobile navigation with accessible RTL labels', () => {
+    const kit = createShadcnKit(inputs);
+    const Shell = kit.shell;
+    const markup = renderToStaticMarkup(createElement(Shell, {
+        lavertia: {
+            version: 1, locale: 'ar', direction: 'rtl', tree: node('text'),
+            navigation: [
+                { slug: 'home', url: '/home', label: 'الرئيسية', group: 'عام', active: true },
+                { slug: 'docs', url: 'https://example.org/docs', label: 'دليل', group: 'عام', active: false },
+                { slug: 'bad', url: 'javascript:alert(1)', label: 'Bad', group: 'عام', active: false },
+            ],
+        },
+        children: createElement('p', null, 'محتوى مستقل'),
+    }));
+    assert.match(markup, /<details/);
+    assert.match(markup, /<summary/);
+    assert.match(markup, /القائمة/);
+    assert.match(markup, /aria-current="page"/);
+    assert.match(markup, /href="\\/home"/);
+    assert.match(markup, /href="https:\\/\\/example.org\\/docs"/);
+    assert.match(markup, /rel="noopener noreferrer"/);
+    assert.doesNotMatch(markup, /href="javascript:/);
+    assert.match(markup, /محتوى مستقل/);
+});

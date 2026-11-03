@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Link } from '@inertiajs/react';
-import { themeVariables } from '@lavertia/ui';
+import { safeHref, themeVariables } from '@lavertia/ui';
 import type { UiKitDefinition, UiComponentProps, UiShellProps } from '@lavertia/react-ui';
 import type { ShadcnPrimitives } from './primitives.js';
 import { createShadcnFields } from './fields.js';
@@ -43,7 +43,6 @@ export function createShadcnKit(primitives: ShadcnPrimitives): UiKitDefinition {
     function ShadcnPageShell({ lavertia, children }: UiShellProps) {
         const navigation = lavertia.navigation ?? [];
         const lavertiaTokens = themeVariables(lavertia.theme);
-        // The safe PHP theme is mapped into shadcn tokens only on this Page root.
         const style: Record<string, string> = { ...lavertiaTokens };
         const mappings: Record<string, string> = {
             '--lvt-primary': '--primary',
@@ -57,6 +56,42 @@ export function createShadcnKit(primitives: ShadcnPrimitives): UiKitDefinition {
             }
         }
 
+        const labels = lavertia.locale === 'ar'
+            ? { navigation: 'التنقل الرئيسي', menu: 'القائمة' }
+            : lavertia.locale === 'fr'
+                ? { navigation: 'Navigation principale', menu: 'Menu' }
+                : { navigation: 'Primary navigation', menu: 'Menu' };
+
+        const navigationMarkup = (
+            <nav aria-label={labels.navigation}>
+                <ul className="grid gap-1">
+                    {navigation.map((item, index) => {
+                        const href = safeHref(item.url);
+                        if (!href) {
+                            return null;
+                        }
+
+                        const classes = 'block rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ' +
+                            (item.active
+                                ? 'bg-primary text-primary-foreground'
+                                : 'text-foreground hover:bg-accent hover:text-accent-foreground');
+                        const link = href.startsWith('/')
+                            ? <Link href={href} aria-current={item.active ? 'page' : undefined} className={classes}>{item.label}</Link>
+                            : <a href={href} rel="noopener noreferrer" aria-current={item.active ? 'page' : undefined} className={classes}>{item.label}</a>;
+
+                        return (
+                            <li key={item.slug}>
+                                {item.group && (index === 0 || navigation[index - 1]?.group !== item.group) && (
+                                    <p className="text-muted-foreground px-3 pb-1 pt-3 text-xs font-semibold">{item.group}</p>
+                                )}
+                                {link}
+                            </li>
+                        );
+                    })}
+                </ul>
+            </nav>
+        );
+
         return (
             <main
                 lang={lavertia.locale ?? 'en'}
@@ -66,33 +101,22 @@ export function createShadcnKit(primitives: ShadcnPrimitives): UiKitDefinition {
             >
                 <div className="mx-auto grid w-full max-w-screen-2xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] lg:px-8">
                     {navigation.length > 0 && (
-                        <aside className="min-w-0 lg:sticky lg:top-6 lg:self-start">
-                            <Card className="overflow-hidden">
-                                <CardContent className="p-2">
-                                    <nav aria-label="Panel navigation">
-                                        <ul className="grid gap-1">
-                                            {navigation.map((item, index) => (
-                                                <li key={item.slug}>
-                                                    {item.group && (index === 0 || navigation[index - 1]?.group !== item.group) && (
-                                                        <p className="text-muted-foreground px-3 pt-3 pb-1 text-xs font-semibold">{item.group}</p>
-                                                    )}
-                                                    <Link
-                                                        href={item.url}
-                                                        aria-current={item.active ? 'page' : undefined}
-                                                        className={'block rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ' +
-                                                            (item.active
-                                                                ? 'bg-primary text-primary-foreground'
-                                                                : 'text-foreground hover:bg-accent hover:text-accent-foreground')}
-                                                    >
-                                                        {item.label}
-                                                    </Link>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </nav>
-                                </CardContent>
-                            </Card>
-                        </aside>
+                        <>
+                            <details className="group min-w-0 lg:hidden">
+                                <summary className="border-border bg-card text-foreground focus-visible:ring-ring cursor-pointer list-none rounded-lg border px-4 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:outline-none">
+                                    {labels.menu}
+                                    <span aria-hidden="true" className="ms-2 inline-block transition-transform group-open:rotate-180">⌄</span>
+                                </summary>
+                                <Card className="mt-2 overflow-hidden">
+                                    <CardContent className="p-2">{navigationMarkup}</CardContent>
+                                </Card>
+                            </details>
+                            <aside className="hidden min-w-0 lg:sticky lg:top-6 lg:block lg:self-start">
+                                <Card className="overflow-hidden">
+                                    <CardContent className="p-2">{navigationMarkup}</CardContent>
+                                </Card>
+                            </aside>
+                        </>
                     )}
                     <div className={'min-w-0 space-y-6' + (navigation.length === 0 ? ' lg:col-span-2' : '')}>
                         {children}
