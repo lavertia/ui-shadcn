@@ -41,7 +41,7 @@ test('column manager and filters update visible rows without losing the table he
     await expect(page.getByRole('columnheader', { name: 'Status' })).toHaveCount(0);
     await expect(page.getByRole('columnheader', { name: /Name/ })).toHaveCount(1);
 
-    await table.locator('header select').selectOption('paused');
+    await page.locator('section[aria-label="Members"] header select').selectOption('paused');
     await expect(table.locator('tbody tr')).toHaveCount(5);
     await expect(table.locator('tbody')).toContainText('Person 2');
     await expect(table.getByRole('cell', { name: 'Person 1', exact: true })).toHaveCount(0);
