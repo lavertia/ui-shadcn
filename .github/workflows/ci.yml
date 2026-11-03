@@ -38,10 +38,10 @@ jobs:
           consumer="$(mktemp -d)"
           cd "$consumer"
           npm init -y > /dev/null
-          npm install --no-package-lock --no-audit --no-fund             "$GITHUB_WORKSPACE/$package"             "github:lavertia/ui#83b7f5406a75af9960718bea15f912261e85d9f5"             "github:lavertia/react-ui#18d518d41081ce56841a85b882f5f115b9ef60bd"             "react@^19" "react-dom@^19" "@inertiajs/react@^3"
+          npm install --no-package-lock --no-audit --no-fund             "$GITHUB_WORKSPACE/$package"             "github:lavertia/ui#83b7f5406a75af9960718bea15f912261e85d9f5"             "github:lavertia/react-ui#e7485bd8ae8292c53d02690a0c5bc2fab72ddbde"             "react@^19" "react-dom@^19" "@inertiajs/react@^3"
           node --input-type=module <<'NODE'
           import { createShadcnKit } from '@lavertia/ui-shadcn';
-          import { createUiRegistry } from '@lavertia/react-ui';
+          import { createUiRegistry } from '@lavertia/react-ui/registry';
           const element = () => null;
           const kit = createShadcnKit({
             Input: element, Label: element, Textarea: element,
