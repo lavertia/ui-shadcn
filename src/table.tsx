@@ -32,6 +32,14 @@ export function createShadcnTable(primitives: ShadcnPrimitives): UiComponent | n
         return null;
     }
 
+    // Captured non-null aliases remain narrowed inside the React component closure.
+    const TablePrimitive = Table;
+    const TableHeaderPrimitive = TableHeader;
+    const TableBodyPrimitive = TableBody;
+    const TableRowPrimitive = TableRow;
+    const TableHeadPrimitive = TableHead;
+    const TableCellPrimitive = TableCell;
+
     function ShadcnTable({ node }: UiComponentProps) {
         const state = useTableState(node);
         const {
@@ -145,11 +153,11 @@ export function createShadcnTable(primitives: ShadcnPrimitives): UiComponent | n
                         </header>
 
                         <div className="min-w-0 overflow-x-auto">
-                            <Table className="w-full text-sm">
-                                <TableHeader>
-                                    <TableRow>
+                            <TablePrimitive className="w-full text-sm">
+                                <TableHeaderPrimitive>
+                                    <TableRowPrimitive>
                                         {visibleColumns.map((column) => (
-                                            <TableHead
+                                            <TableHeadPrimitive
                                                 key={column.key}
                                                 scope="col"
                                                 aria-sort={column.sortable
@@ -167,37 +175,37 @@ export function createShadcnTable(primitives: ShadcnPrimitives): UiComponent | n
                                                         {column.label} <span aria-hidden="true">↕</span>
                                                     </Button>
                                                 ) : column.label}
-                                            </TableHead>
+                                            </TableHeadPrimitive>
                                         ))}
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
+                                    </TableRowPrimitive>
+                                </TableHeaderPrimitive>
+                                <TableBodyPrimitive>
                                     {pageRows.map((row, index) => (
-                                        <TableRow key={String(row.id ?? index)}>
+                                        <TableRowPrimitive key={String(row.id ?? index)}>
                                             {visibleColumns.map((column) => {
                                                 const value = String(row[column.key] ?? '—');
                                                 const tone = columnBadgeTone(column, row[column.key]);
                                                 return (
-                                                    <TableCell key={column.key} className="whitespace-nowrap px-4 py-3">
+                                                    <TableCellPrimitive key={column.key} className="whitespace-nowrap px-4 py-3">
                                                         {column.badge ? (
                                                             Badge ? <Badge className={'rounded-md px-2 py-1 text-xs ' + badgeToneClasses[tone]}>{value}</Badge>
                                                                 : <span className={'rounded-md px-2 py-1 text-xs ' + badgeToneClasses[tone]}>{value}</span>
                                                         ) : value}
-                                                    </TableCell>
+                                                    </TableCellPrimitive>
                                                 );
                                             })}
-                                        </TableRow>
+                                        </TableRowPrimitive>
                                     ))}
                                     {pageRows.length === 0 && (
-                                        <TableRow>
-                                            <TableCell colSpan={Math.max(1, visibleColumns.length)}
+                                        <TableRowPrimitive>
+                                            <TableCellPrimitive colSpan={Math.max(1, visibleColumns.length)}
                                                 className="text-muted-foreground py-12 text-center text-sm">
                                                 {tx('noResults')}
-                                            </TableCell>
-                                        </TableRow>
+                                            </TableCellPrimitive>
+                                        </TableRowPrimitive>
                                     )}
-                                </TableBody>
-                            </Table>
+                                </TableBodyPrimitive>
+                            </TablePrimitive>
                         </div>
 
                         <footer className="border-border flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3 sm:px-6">
