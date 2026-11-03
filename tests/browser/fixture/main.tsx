@@ -1,6 +1,7 @@
-import React, { createElement } from 'react';
+import React, { createElement, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { UiRegistryProvider } from '@lavertia/react-ui/registry';
+import { UiRegistryProvider, createUiRegistry } from '@lavertia/react-ui/registry';
+import { DefaultPageShell } from '@lavertia/react-ui';
 import LavertiaRenderer from '@lavertia/react-ui/renderer';
 import type { ComponentNode, LavertiaPayload } from '@lavertia/ui';
 import { createShadcnKit } from '../../../src/index.js';
@@ -50,12 +51,6 @@ const kit = createShadcnKit({
 });
 
 const registry = createUiRegistry().registerKit(kit);
-function createUiRegistry() {
-    // Keep the real registry code out of this fixture's UI implementation.
-    // It is loaded from the official CSS-free public subpath.
-    return __createUiRegistry();
-}
-import { createUiRegistry as __createUiRegistry } from '@lavertia/react-ui/registry';
 
 const fields: ComponentNode[] = [
     {
@@ -110,12 +105,16 @@ const payload: LavertiaPayload = {
     version: 1, locale: 'ar', direction: 'rtl', title: 'UI Kit browser lab',
     tree: table, navigation: [], uiKit: { id: 'shadcn' },
 };
-const Shell = kit.shell!;
-
 function App() {
+    const [kitId, setKitId] = useState<'shadcn' | 'default'>('shadcn');
+    const Shell = kitId === 'shadcn' ? kit.shell! : DefaultPageShell;
+
     return (
-        <UiRegistryProvider registry={registry} kitId="shadcn">
-            <Shell lavertia={payload}>
+        <UiRegistryProvider registry={registry} kitId={kitId}>
+            <Shell lavertia={{ ...payload, uiKit: { id: kitId } }}>
+                <button type="button" onClick={() => setKitId((current) => current === 'shadcn' ? 'default' : 'shadcn')}>
+                    {kitId === 'shadcn' ? 'Switch to default UI' : 'Switch to Shadcn UI'}
+                </button>
                 <h1>Lavertia UI Kit Integration Lab</h1>
                 <form id="fixture-form" onSubmit={(e) => e.preventDefault()} aria-label="Example form">
                     {fields.map((node) => <LavertiaRenderer key={node.key} node={node} />)}
