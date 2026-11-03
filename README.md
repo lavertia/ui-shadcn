@@ -97,3 +97,15 @@ npx shadcn@latest add table
 ```
 
 Import the six host components into your `createShadcnKit` call. This is intentionally optional so existing users can upgrade the package without adding new UI primitives immediately.
+
+## Browser interaction QA
+
+The UI Kit includes a Vite-powered React fixture (not a production Laravel app) to test host-owned field/table primitive contracts in real Chromium, across desktop and mobile viewports:
+
+```bash
+npm install
+npx playwright install chromium
+npm run test:browser
+```
+
+Tests exercise first-render `dir=rtl`, keyboard/touch form values and FormData, snapshot Table searching, sorting, column visibility, filters and pagination. CI captures failure traces/screenshots. **This is contract/UI interaction coverage, not full Laravel route/CSRF/tenancy E2E or a visual audit of stock shadcn primitives.**
