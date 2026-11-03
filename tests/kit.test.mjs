@@ -155,8 +155,8 @@ test('Shadcn Shell provides keyboard-friendly mobile navigation with accessible 
     assert.match(markup, /<summary/);
     assert.match(markup, /القائمة/);
     assert.match(markup, /aria-current="page"/);
-    assert.match(markup, /href="\\/home"/);
-    assert.match(markup, /href="https:\\/\\/example.org\\/docs"/);
+    assert.ok(markup.includes('href="/home"'));
+    assert.ok(markup.includes('href="https://example.org/docs"'));
     assert.match(markup, /rel="noopener noreferrer"/);
     assert.doesNotMatch(markup, /href="javascript:/);
     assert.match(markup, /محتوى مستقل/);
