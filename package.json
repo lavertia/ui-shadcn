@@ -34,7 +34,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@lavertia/react-ui": "github:lavertia/react-ui#ff24174b9a97f03b9bccc73f2982785d8a6d97b8",
+    "@lavertia/react-ui": "github:lavertia/react-ui#e7485bd8ae8292c53d02690a0c5bc2fab72ddbde",
     "@lavertia/ui": "github:lavertia/ui#83b7f5406a75af9960718bea15f912261e85d9f5",
     "@inertiajs/react": "^3.0.0",
     "react": "^19.0.0",
