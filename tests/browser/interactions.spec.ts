@@ -53,3 +53,19 @@ test('the shell fits a mobile viewport and remains RTL on initial render', async
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(2);
 });
+
+test('switches between default and Shadcn UI without changing the serialized component tree', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('main')).toHaveAttribute('dir', 'rtl');
+    await expect(page.locator('section[aria-label="Members"]')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Switch to default UI' }).click();
+    await expect(page.locator('main')).toHaveAttribute('dir', 'rtl');
+    await expect(page.locator('section[aria-label="Members"]')).toBeVisible();
+    await expect(page.locator('table tbody')).toContainText('Person 1');
+    await expect(page.getByRole('button', { name: 'Switch to Shadcn UI' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Switch to Shadcn UI' }).click();
+    await expect(page.locator('section[aria-label="Members"]')).toBeVisible();
+    await expect(page.locator('table tbody')).toContainText('Person 1');
+});

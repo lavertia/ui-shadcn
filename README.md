@@ -113,3 +113,7 @@ npm run test:browser
 ```
 
 Tests exercise first-render `dir=rtl`, keyboard/touch form values and FormData, snapshot Table searching, sorting, column visibility, filters and pagination. CI captures failure traces/screenshots. **This is contract/UI interaction coverage, not full Laravel route/CSRF/tenancy E2E or a visual audit of stock shadcn primitives.**
+
+## Runtime UI Kit switching (browser test)
+
+The Chromium integration fixture includes an opt-in **test-only** toggle between the built-in `default` renderer and `shadcn` registry. Both render the same frozen `ComponentNode` tree: no PHP schema or Eloquent API changes. This does not expose a production end-user UI switcher automatically; an application must still install/register both kits and set a selected Kit ID.
