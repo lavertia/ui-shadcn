@@ -1,0 +1,46 @@
+{
+  "name": "@lavertia/ui-shadcn",
+  "version": "0.1.0-alpha.2",
+  "description": "Official swappable shadcn UI Kit for Lavertia React",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lavertia/ui-shadcn.git"
+  },
+  "homepage": "https://github.com/lavertia/ui-shadcn",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run build && node --test tests/*.test.mjs"
+  },
+  "peerDependencies": {
+    "@lavertia/react-ui": "^0.1.0-alpha.1",
+    "@lavertia/ui": "^0.1.0-alpha.1",
+    "@inertiajs/react": "^3.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@lavertia/react-ui": "github:lavertia/react-ui#150f97b015ed938454fed35010e7a9f26ebed256",
+    "@lavertia/ui": "github:lavertia/ui#83b7f5406a75af9960718bea15f912261e85d9f5",
+    "@inertiajs/react": "^3.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.0"
+  }
+}
