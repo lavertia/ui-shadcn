@@ -20,3 +20,41 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm pack --dry-run
+
+  consumer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-package-lock --no-audit --no-fund
+      - run: npm run build
+      - name: Install packed UI Kit into an isolated React consumer
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="$(npm pack --silent)"
+          consumer="$(mktemp -d)"
+          cd "$consumer"
+          npm init -y > /dev/null
+          npm install --no-package-lock --no-audit --no-fund             "$GITHUB_WORKSPACE/$package"             "github:lavertia/ui#83b7f5406a75af9960718bea15f912261e85d9f5"             "github:lavertia/react-ui#18d518d41081ce56841a85b882f5f115b9ef60bd"             "react@^19" "react-dom@^19" "@inertiajs/react@^3"
+          node --input-type=module <<'NODE'
+          import { createShadcnKit } from '@lavertia/ui-shadcn';
+          import { createUiRegistry } from '@lavertia/react-ui';
+          const element = () => null;
+          const kit = createShadcnKit({
+            Input: element, Label: element, Textarea: element,
+            Checkbox: element, Button: element, Card: element, CardContent: element,
+            Table: element, TableHeader: element, TableBody: element,
+            TableRow: element, TableHead: element, TableCell: element,
+          });
+          const registry = createUiRegistry().registerKit(kit);
+          if (registry.resolve('table', 'shadcn') !== kit.components.table) {
+            throw new Error('Packed Shadcn Kit failed to register native Tables.');
+          }
+          if (registry.resolve('form', 'shadcn') !== kit.components.form) {
+            throw new Error('Packed Shadcn Kit failed to register Forms.');
+          }
+          console.log('Packed UI Kit consumer install and registry smoke passed');
+          NODE
