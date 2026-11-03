@@ -98,6 +98,10 @@ npx shadcn@latest add table
 
 Import the six host components into your `createShadcnKit` call. This is intentionally optional so existing users can upgrade the package without adding new UI primitives immediately.
 
+## Responsive shell navigation
+
+When the backend provides navigation, the Shadcn Page Shell renders a compact native `<details>` disclosure on mobile and a sticky Sidebar on desktop. Both use keyboard-accessible links and the server's initial locale for menu labels (Arabic, French, English). Invalid/untrusted URLs are omitted; safe external links receive `rel="noopener noreferrer"`. When there is no navigation, the Page remains a full-width independent layout instead of forcing an Admin Panel.
+
 ## Browser interaction QA
 
 The UI Kit includes a Vite-powered React fixture (not a production Laravel app) to test host-owned field/table primitive contracts in real Chromium, across desktop and mobile viewports:
