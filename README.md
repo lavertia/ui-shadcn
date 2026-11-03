@@ -101,3 +101,15 @@ Import the six host components into your `createShadcnKit` call. This is intenti
 ## Responsive shell navigation
 
 When the backend provides navigation, the Shadcn Page Shell renders a compact native `<details>` disclosure on mobile and a sticky Sidebar on desktop. Both use keyboard-accessible links and the server's initial locale for menu labels (Arabic, French, English). Invalid/untrusted URLs are omitted; safe external links receive `rel="noopener noreferrer"`. When there is no navigation, the Page remains a full-width independent layout instead of forcing an Admin Panel.
+
+## Browser interaction QA
+
+The UI Kit includes a Vite-powered React fixture (not a production Laravel app) to test host-owned field/table primitive contracts in real Chromium, across desktop and mobile viewports:
+
+```bash
+npm install
+npx playwright install chromium
+npm run test:browser
+```
+
+Tests exercise first-render `dir=rtl`, keyboard/touch form values and FormData, snapshot Table searching, sorting, column visibility, filters and pagination. CI captures failure traces/screenshots. **This is contract/UI interaction coverage, not full Laravel route/CSRF/tenancy E2E or a visual audit of stock shadcn primitives.**
