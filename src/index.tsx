@@ -6,12 +6,14 @@ import type { ShadcnPrimitives } from './primitives.js';
 import { createShadcnFields } from './fields.js';
 import { createShadcnForm } from './form.js';
 import { createShadcnAction } from './action.js';
+import { createShadcnTable } from './table.js';
 
 export type { ShadcnPrimitives, ShadcnSelectControlProps, ShadcnCheckboxProps } from './primitives.js';
 
 /** Progressive shadcn UI Kit that never modifies the PHP component protocol. */
 export function createShadcnKit(primitives: ShadcnPrimitives): UiKitDefinition {
     const { Card, CardContent } = primitives;
+    const ShadcnTable = createShadcnTable(primitives);
 
     function ShadcnCard({ children }: UiComponentProps) {
         return (
@@ -106,11 +108,13 @@ export function createShadcnKit(primitives: ShadcnPrimitives): UiKitDefinition {
         components: {
             ...createShadcnFields(primitives),
             form: createShadcnForm(primitives),
+            ...(ShadcnTable ? { table: ShadcnTable } : {}),
             action: createShadcnAction(primitives),
             card: ShadcnCard,
             'page-header': ShadcnPageHeader,
         },
-        // Table and other incomplete components intentionally retain tested default implementations.
+        // Tables use real shadcn primitives only when the host supplies a complete Table set.
+        // Otherwise built-in table/advanced components continue to render.
         fallback: 'default',
     };
 }

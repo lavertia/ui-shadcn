@@ -8,10 +8,10 @@
 
 - `lavertia/ui`: shared serializable component protocol and theme tokens
 - `lavertia/react-ui`: React component registry, layout/shell contract, reusable Inertia form state and fallback renderers
-- **`lavertia/ui-shadcn` (this repository):** shadcn presentation of Page Shell, Card, Page Header, Forms, TextInput, Textarea, Checkbox, Select and Action links
+- **`lavertia/ui-shadcn` (this repository):** shadcn presentation of Page Shell, Card, Page Header, Forms, TextInput, Textarea, Checkbox, Select, Action links and Table (when host provides shadcn Table primitives)
 - **Host Laravel app:** owns actual shadcn open-code primitives (Radix/Base UI), CSS variables, theme styles, routing and authorization
 
-This package does **not** bundle shadcn vendor sources, fork the React renderer, or depend on the Laravel Panel. Table rendering currently falls back to the default React UI implementation. The core still supports Vue and Svelte independently.
+This package does **not** bundle shadcn vendor sources, fork the React renderer, or depend on the Laravel Panel. Table rendering uses the host's native shadcn primitives if provided. Otherwise the tested default React UI Table remains the fallback. The core still supports Vue and Svelte independently.
 
 ## Install (React preview)
 
@@ -23,7 +23,7 @@ npm install github:lavertia/ui#main github:lavertia/react-ui#main github:laverti
 
 # Only if the host does not already contain these shadcn primitives:
 npx shadcn@latest init
-npx shadcn@latest add card input label textarea checkbox button
+npx shadcn@latest add card input label textarea checkbox button table
 
 php artisan lavertia:install --stack=react --ui=shadcn
 npm run build
@@ -42,10 +42,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import type { LavertiaPayload } from '@lavertia/ui';
 
 const registry = createUiRegistry().registerKit(createShadcnKit({
     Input, Label, Textarea, Checkbox, Button, Card, CardContent,
+    Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
 }));
 
 export default function Page({ lavertia }: { lavertia: LavertiaPayload }) {
@@ -67,7 +69,7 @@ Optional `buttonClassName: variant => buttonVariants({ variant })` maps local In
 - Actions sanitize link destinations using the common `safeHref` contract; external links use `rel="noopener noreferrer"`.
 - RTL/locale come from the server-rendered Lavertia payload, not a late browser flip.
 - UI Kit and Theme are separate concepts. Changing the Kit does not change PHP component definitions.
-- This package is not fully featured: native/shadcn Table, Dialog, advanced components and browser/a11y visual QA remain milestones.
+- This package is not fully featured: Dialog, advanced table options, advanced fields and browser/a11y visual QA remain milestones.
 
 ## Development
 
@@ -81,3 +83,17 @@ npm pack --dry-run
 GitHub Actions validates TypeScript, SSR component tests and package output on PRs. See [the founder-approved roadmap](https://github.com/lavertia/panels/blob/main/docs/FEATURE_ROADMAP.md) and [UI Kit extraction issue](https://github.com/lavertia/panels/issues/47).
 
 License: MIT.
+
+## Table contract
+
+A host that provides all six `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead` and `TableCell` shadcn primitives enables the native Table renderer automatically. You may also supply `Badge`; otherwise it renders a styled `span`.
+
+The Table uses `@lavertia/react-ui/table-state` for shared filtering, sorting, column visibility/reordering, and pagination. **Eloquent mode always delegates filtering and paging to Laravel**, never materializes an entire query in React. The optional column manager and snapshot pagination retain the existing PHP protocol and generated output. The table adapter does not yet support advanced bulk selection/actions or a dedicated Dialog.
+
+To add the native Table to an already configured React app:
+
+```bash
+npx shadcn@latest add table
+```
+
+Import the six host components into your `createShadcnKit` call. This is intentionally optional so existing users can upgrade the package without adding new UI primitives immediately.

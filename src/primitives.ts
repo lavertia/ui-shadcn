@@ -5,6 +5,9 @@ import type {
     InputHTMLAttributes,
     LabelHTMLAttributes,
     TextareaHTMLAttributes,
+    TableHTMLAttributes,
+    ThHTMLAttributes,
+    TdHTMLAttributes,
 } from 'react';
 
 /** Application-owned, open-code shadcn UI primitives. No @/ path assumptions. */
@@ -40,6 +43,17 @@ export interface ShadcnPrimitives {
      * The fallback is an accessible semantic native select.
      */
     SelectControl?: ComponentType<ShadcnSelectControlProps>;
+    /**
+     * Optional host-owned shadcn Table primitives. The Kit overrides Table
+     * only when all six primitives exist, preserving legacy behavior otherwise.
+     */
+    Table?: ComponentType<TableHTMLAttributes<HTMLTableElement>>;
+    TableHeader?: ComponentType<HTMLAttributes<HTMLTableSectionElement>>;
+    TableBody?: ComponentType<HTMLAttributes<HTMLTableSectionElement>>;
+    TableRow?: ComponentType<HTMLAttributes<HTMLTableRowElement>>;
+    TableHead?: ComponentType<ThHTMLAttributes<HTMLTableCellElement>>;
+    TableCell?: ComponentType<TdHTMLAttributes<HTMLTableCellElement>>;
+    Badge?: ComponentType<HTMLAttributes<HTMLSpanElement>>;
     /** Reuse the application's shadcn buttonVariants for Inertia links. */
     buttonClassName?: (variant: ActionVariant) => string;
 }
